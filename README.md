@@ -80,7 +80,7 @@ app/
     PreviewPage.tsx       # the token-driven sample page
     Logo.tsx              # geometric brand mark
 lib/
-  aesthetics.ts           # aesthetic + font catalog and design tokens
+  aesthetics.ts           # aesthetic + font catalogue and design tokens
   fonts.ts                # next/font setup + resolved font-family map
   exportSpecCard.ts       # PNG spec-card generation
 ```

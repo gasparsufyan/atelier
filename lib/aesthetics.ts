@@ -1,4 +1,4 @@
-// Single source of truth for the aesthetic + font catalog.
+// Single source of truth for the aesthetic + font catalogue.
 // Pure data (no next/font import) so it is safe to import from client components.
 
 export type ThemeMode = "light" | "dark";

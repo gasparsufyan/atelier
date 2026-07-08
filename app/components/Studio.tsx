@@ -262,7 +262,7 @@ export default function Studio() {
             onClick={() => setControlsOpen(true)}
             className="btn-accent shrink-0 rounded-xl px-4 py-2.5 text-sm font-semibold"
           >
-            Customize
+            Customise
           </button>
         </div>
       </main>
@@ -279,7 +279,7 @@ export default function Studio() {
           <div className="sheet absolute inset-x-0 bottom-0 max-h-[86dvh] overflow-y-auto rounded-t-3xl px-5 pb-8 pt-3">
             <div className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-white/20" />
             <div className="mb-4 flex items-center justify-between">
-              <span className="text-sm font-semibold">Customize</span>
+              <span className="text-sm font-semibold">Customise</span>
               <button
                 type="button"
                 onClick={() => setControlsOpen(false)}
