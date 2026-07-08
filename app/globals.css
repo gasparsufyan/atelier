@@ -1,26 +1,197 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
+
+  /* Fixed app-chrome palette: monochrome only (whites / greys / blacks) */
+  --app-bg: #0a0a0a;
+  --app-panel: rgba(255, 255, 255, 0.045);
+  --app-panel-solid: #161616;
+  --app-border: rgba(255, 255, 255, 0.09);
+  --app-border-strong: rgba(255, 255, 255, 0.16);
+  --app-text: #ededed;
+  --app-muted: #8f8f8f;
+  --app-faint: #5c5c5c;
+  --app-accent: #e5e5e5;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-plex-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100%;
+  background: var(--app-bg);
+  color: var(--app-text);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------------------------------------------------------------- App chrome */
+
+.app-canvas {
+  background:
+    radial-gradient(1200px 620px at 82% -12%, rgba(255, 255, 255, 0.06), transparent 60%),
+    radial-gradient(900px 520px at -5% 112%, rgba(255, 255, 255, 0.03), transparent 55%),
+    var(--app-bg);
+}
+
+.app-grid {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: 46px 46px;
+}
+
+.glass {
+  background: var(--app-panel);
+  backdrop-filter: blur(22px) saturate(150%);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  border: 1px solid var(--app-border);
+}
+
+.depth {
+  box-shadow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+    0 2px 8px rgba(0, 0, 0, 0.35),
+    0 24px 60px -24px rgba(0, 0, 0, 0.85);
+}
+
+/* Opaque control sheet for mobile/tablet, stays legible over any preview theme */
+.sheet {
+  background: var(--app-panel-solid);
+  border-top: 1px solid var(--app-border-strong);
+  box-shadow: 0 -24px 70px -10px rgba(0, 0, 0, 0.75);
+}
+
+.window-frame {
+  box-shadow:
+    0 0 0 1px var(--app-border),
+    0 40px 90px -40px rgba(0, 0, 0, 0.95),
+    0 12px 34px -18px rgba(0, 0, 0, 0.7);
+}
+
+/* Selectable control option */
+.opt {
+  border: 1px solid var(--app-border);
+  background: rgba(255, 255, 255, 0.02);
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.12s ease;
+}
+.opt:hover {
+  background: rgba(255, 255, 255, 0.055);
+  border-color: var(--app-border-strong);
+}
+.opt:active {
+  transform: scale(0.985);
+}
+.opt[data-active="true"] {
+  background: rgba(255, 255, 255, 0.13);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.btn-accent {
+  background: linear-gradient(180deg, #f5f5f5, #dcdcdc);
+  color: #0a0a0a;
+  transition: filter 0.15s ease, transform 0.12s ease;
+}
+.btn-accent:hover {
+  filter: brightness(1.06);
+}
+.btn-accent:active {
+  transform: translateY(1px);
+}
+.btn-accent:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.btn-outline {
+  border: 1px solid var(--app-border-strong);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--app-text);
+  transition: background 0.15s ease, transform 0.12s ease;
+}
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.btn-outline:active {
+  transform: translateY(1px);
+}
+.btn-outline:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* -------------------------------------------------- Preview (token-driven) */
+
+.preview {
+  background: var(--pv-bg);
+  color: var(--pv-text);
+  font-family: var(--font-preview), ui-sans-serif, system-ui, sans-serif;
+}
+.pv-heading {
+  letter-spacing: var(--pv-heading-spacing);
+  line-height: 1.03;
+}
+.pv-muted {
+  color: var(--pv-muted);
+}
+.pv-accent {
+  color: var(--pv-accent);
+}
+.pv-card {
+  background: var(--pv-surface);
+  border: var(--pv-border-width) solid var(--pv-border);
+  border-radius: var(--pv-radius);
+  box-shadow: var(--pv-shadow);
+}
+.pv-elevated {
+  background: var(--pv-elevated);
+  border: var(--pv-border-width) solid var(--pv-border);
+  border-radius: var(--pv-radius);
+}
+.pv-btn {
+  border-radius: calc(var(--pv-radius) * 0.7);
+  font-weight: 600;
+  transition: transform 0.12s ease, opacity 0.15s ease;
+}
+.pv-btn:active {
+  transform: translateY(1px);
+}
+.pv-btn-primary {
+  background: var(--pv-accent);
+  color: var(--pv-accent-text);
+}
+.pv-btn-secondary {
+  background: transparent;
+  color: var(--pv-text);
+  border: var(--pv-border-width) solid var(--pv-border);
+}
+.pv-chip {
+  border: var(--pv-border-width) solid var(--pv-border);
+  border-radius: 999px;
+}
+.pv-rule {
+  background: var(--pv-border);
+}
+
+/* A restrained scrollbar for the preview surface */
+.pv-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--app-border-strong) transparent;
+}
+.pv-scroll::-webkit-scrollbar {
+  width: 10px;
+}
+.pv-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
 }

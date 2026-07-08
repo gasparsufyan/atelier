@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Atelier
 
-## Getting Started
+A design-discovery tool for client-facing engagements. When a client isn't yet
+sure what they want, Atelier lets them explore curated design directions on a
+live sample page and hand a concrete choice back to the studio.
 
-First, run the development server:
+The client controls three axes and sees them applied instantly to one cohesive
+mock page:
+
+- **Theme**: light / dark
+- **Aesthetic**: one of six curated design identities
+- **Typeface**: one of six popular design fonts
+
+When they land on a combination they like, they hand it back to the studio
+either by **copying a shareable link** (which reopens the exact combination) or
+by **exporting a "spec card"** (a `.txt` summary of the aesthetic, theme,
+palette and typeface).
+
+## Aesthetics
+
+| Aesthetic | Character |
+| --- | --- |
+| Swiss | Grid-driven, restrained, precise |
+| Editorial | Serif-led, magazine hierarchy |
+| Brutalist | Raw, high-contrast, hard edges |
+| Soft Depth | Glassy layers, gentle shadow |
+| Warm Organic | Earthy, tactile, humanist |
+| Bold Expressive | Vivid, dramatic, maximal |
+
+Each aesthetic carries its own default typeface, but any of the six fonts can be
+paired with any aesthetic.
+
+## Getting started
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Other scripts:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build    # production build
+npm run start    # serve the production build
+npm run lint     # ESLint
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## How it works
 
-## Learn More
+- **Token-driven restyling.** Each aesthetic × theme is a set of design tokens
+  (colour, radius, border weight, shadow, type spacing) defined in
+  [`lib/aesthetics.ts`](lib/aesthetics.ts). The sample page is styled entirely
+  from `--pv-*` CSS variables, so changing a selection is an instant CSS swap
+  with no re-render.
+- **App chrome vs. preview.** The surrounding UI (glassy controls, layered
+  depth) keeps its own fixed premium identity; only the mock page inside the
+  window frame restyles.
+- **Persistence & sharing.** The current selection is stored in `localStorage`,
+  so a client's last direction is restored on return. It also encodes into a
+  shareable URL (`?theme=…&aesthetic=…&font=…`); opening such a link adopts that
+  selection (query params take precedence over storage, then the URL is
+  cleaned). The `Studio` is rendered client-only, which avoids a flash of the
+  default theme and lets it read the URL without a Suspense boundary.
+- **Spec-card export.** [`lib/exportSpecCard.ts`](lib/exportSpecCard.ts) builds
+  a formatted plain-text summary of the selection and downloads it as a `.txt`
+  file.
 
-To learn more about Next.js, take a look at the following resources:
+## Project structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+app/
+  layout.tsx              # loads fonts, global metadata
+  page.tsx                # renders the client Studio
+  icon.svg                # geometric favicon
+  globals.css             # app chrome + token-driven preview styles
+  components/
+    ClientStudio.tsx      # client-only dynamic wrapper (ssr: false)
+    Studio.tsx            # state, persistence, responsive layout, export
+    Controls.tsx          # theme / aesthetic / typeface pickers
+    PreviewPage.tsx       # the token-driven sample page
+    Logo.tsx              # geometric brand mark
+lib/
+  aesthetics.ts           # aesthetic + font catalog and design tokens
+  fonts.ts                # next/font setup + resolved font-family map
+  exportSpecCard.ts       # PNG spec-card generation
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Tech
 
-## Deploy on Vercel
+Next.js 16 (App Router), React 19, Tailwind CSS v4, TypeScript.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> Note: this project targets **Next.js 16**, which differs from earlier
+> versions. See `CLAUDE.md` / `AGENTS.md` and the bundled docs under
+> `node_modules/next/dist/docs/` before making framework changes.
